@@ -4,7 +4,7 @@ This repository contains a mock server, dummy code and documentation to acquire 
 
 ## The basics aka the golden rules of async/await
 
-ES7 Async/await allows us to write asynchronous JS code that looks synchronous.
+ES7 Async/await allows us to write asynchronous JavaScript code that looks synchronous.
 
 ### 1. The foundation of async functions are [Promises](http://exploringjs.com/es6/ch_promises.html).
 
@@ -126,3 +126,15 @@ async function foo() {
 - http://2ality.com/2016/10/async-function-tips.html
 - http://exploringjs.com/es2016-es2017/ch_async-functions.html
 - https://hackernoon.com/6-reasons-why-javascripts-async-await-blows-promises-away-tutorial-c7ec10518dd9
+
+## Getting started
+
+- Clone this repo.
+- `npm install`.
+- `npm start` to start the dev server on http://localhost:3000/.
+
+## Assignment
+
+The demo project contains some nice [callback-based JavaScript code](./public/main.js) which uses a REST API to display information about fictional users, transactions and products.
+
+It's up to you rewrite this code to async/await and add the product details and total transaction amount.
