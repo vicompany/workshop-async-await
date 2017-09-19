@@ -1,14 +1,16 @@
 # Workshop Async/await
 
-This repository contains a mock server, dummy code and documentation to gain knowledge of async functions.
+This repository contains a mock server, dummy code and documentation to acquire knowledge of async functions.
 
 ## The basics aka the golden rules of async/await
+
+ES7 Async/await allows us to write asynchronous JS code that looks synchronous.
 
 ### 1. The foundation of async functions are [Promises](http://exploringjs.com/es6/ch_promises.html).
 
 So readup on Promises when you don't fully understand them yet.
-- [MDN Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
-- [Exploring JS Promises for async programming](http://exploringjs.com/es6/ch_promises.html)
+- [MDN - Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+- [Exploring JS - Promises for async programming](http://exploringjs.com/es6/ch_promises.html)
 
 ### 2. Async functions always return a Promise _when called_
 
@@ -31,10 +33,10 @@ greet('Bob')
 ### 3. An async function can contain an `await` expression
 
 - The `await` operator is used to wait for the result of a `Promise`.
-- __It can only be used inside an async function!__
+- __The `await` operator can only be used inside an async function!__
 
 ```javascript
-const getJson = (url) => fetch(url).then(res => res.json());
+const getJson = url => fetch(url).then(res => res.json());
 
 const getUsers = async () => {
   const users = await getJson('/users');
@@ -57,37 +59,40 @@ async function w00t() {
 w00t();
 ```
 
-Otherwise you can just return the value without using `await` (and wrapping the result).
+Otherwise you can just return the value without using `await` (and without wrapping the result).
 
 ```javascript
 async function getJson(url) {
   return fetch(url).then(res => res.json());
 }
 
-// Don't do this, it's less efficient
+// Don't do this!
 async function getJson(url) {
   return await fetch(url).then(res => res.json());
 }
 ```
 
-- [MDN await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)
+- [MDN - await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)
+- [ESLint - Disallow unnecessary return await (no-return-await)](https://eslint.org/docs/rules/no-return-await)
 
 ### 4. Handling errors and results with `await`.
 
-The operator `await` (which is only allowed inside async functions) waits for its operand, a Promise, to be settled:
+The operator `await` waits for its operand, a Promise, to be settled:
 
-- If the Promise is fulfilled, the result of await is the fulfillment value.
-- If the Promise is rejected, await throws the rejection value.
+- If the Promise is fulfilled, the result of `await` is the fulfillment value.
+- If the Promise is rejected, `await` throws the rejection value.
 
 ```javascript
 async function getUsers() {
-  try {
-    const users = await getJson('/users');
+  let users = [];
 
-    return users;
+  try {
+    users = await getJson('/users');
   } catch (err) {
-    logError(`Could not retrieve users: ${err.message}`);
+    console.error(`Could not retrieve users: ${err.message}`);
   }
+
+  return users;
 }
 ```
 
@@ -102,7 +107,7 @@ async function foo() {
 }
 ```
 
-But executing them in parallel can speed things up.
+But executing them in parallel can speed things up. And you can use ES6 destructuring assignment.
 
 ```javascript
 async function foo() {
@@ -112,6 +117,9 @@ async function foo() {
   ]);
 }
 ```
+
+- [MDN - Destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
+- [Exploring JS - Await is sequential, Promise.all() is parallel](http://exploringjs.com/es2016-es2017/ch_async-functions.html#_await-is-sequential-promiseall-is-parallel)
 
 ## More information
 
