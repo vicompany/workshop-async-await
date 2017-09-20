@@ -11,7 +11,7 @@ const getJSON = (url, callback) => {
 		return callback(new Error(`Request failed: ${xhr.statusText}`));
 	};
 
-	xhr.onabort = () => callback(new Error(`Request failed: ${xhr.statusText}`)); // Fake error
+	xhr.onabort = () => callback(new Error(`Request failed: ${xhr.statusText}`)); // Use abort as fake error
 
 	xhr.send();
 
@@ -25,15 +25,16 @@ const renderError = (el, msg = 'Oops!') => (el.textContent = msg);
 
 const renderUsers = (el, users) => {
 	const html = `
-		<ol class="userlist">
+		<dl>
 			${users.map(u => `
-				<li class="userlist__item">
-					<a href="/users/${u.id}" class="userlist__link">
-						<img class="avatar" src="${u.avatar}" alt="${u.name}" />${u.name} - ${u.job}
-					</a>
-					<div class="userlist__transactions"></div>
-				</li>`).join('')}
-		</ol>
+				<div>
+					<dt>User</dt>
+					<dd><a href="/users/${u.id}"><img class="avatar" src="${u.avatar}" alt="${u.name}" />${u.name}</a></dd>
+					<dt>Transactions</dt>
+					<dd><a href="/users/${u.id}/transactions" class="js-load-transactions">Load</a></dd>
+				</div>
+			`).join('')}
+		</dl>
 	`;
 
 	el.innerHTML = html;
@@ -41,38 +42,34 @@ const renderUsers = (el, users) => {
 
 const renderTransactions = (el, transactions) => {
 	const html = `
-		<dl class="transactionlist">
-			<dt class="transactionlist__label">Bought</dt>
+		<dl class="js-transactionlist">
 			${transactions.map(t => `
-				<dd class="transactionlist__value">
-					<a class="transactionlist__link" href="/transactions/${t.id}">${new Date(t.date).toLocaleDateString()}</a> -
-					<a class="transactionlist__link" href="/products/${t.productId}">product: ${t.productId}</a>
-					<b class="todo">TODO: product details</b>
-				</dd>`).join('')}
+				<dt><a href="/transactions/${t.id}">Transaction: ${t.id}</a></dt>
+				<dd><a href="/products/${t.productId}">Product: ${t.productId}</a><dd>
+				<dd class="todo">Product price/details<dd>
+			`).join('')}
 			<dt>Total $</dt>
-			<dd class="transactionlist_amount"><b class="todo">TODO: transaction amount</b></dd>
+			<dd class="todo">transaction amount</dd>
 		</dl>
 	`;
 
 	el.innerHTML = html;
 };
 
-const toggleTransactions = (el) => {
-	const { href } = el;
-	const container = el.nextElementSibling;
-	const list = container.querySelector('.transactionlist');
+const loadTransactions = (el) => {
+	const { href, parentElement: container } = el;
 
-	if (href && !list) {
-		getJSON(`${href}/transactions`, (err, transactions) => {
-			if (err) {
-				return renderError(container, 'Transaction unavailable!');
-			}
-
-			return renderTransactions(container, transactions);
-		});
-	} else {
-		list.remove();
+	if (!href) {
+		return;
 	}
+
+	getJSON(href, (err, transactions) => {
+		if (err) {
+			return renderError(container, 'Transaction unavailable!');
+		}
+
+		return renderTransactions(container, transactions);
+	});
 };
 
 // IIFE to kick it all off
@@ -89,12 +86,12 @@ const toggleTransactions = (el) => {
 		renderUsers(container, users);
 
 		container.addEventListener('click', (e) => {
-			const userLink = e.target.closest('.userlist__link');
+			const link = e.target.closest('.js-load-transactions');
 
-			if (userLink) {
+			if (link) {
 				e.preventDefault();
 
-				toggleTransactions(userLink);
+				loadTransactions(link);
 			}
 		});
 	});
