@@ -1,7 +1,8 @@
+import cache from './cache.js';
 import { errorTpl, orgTpl, reposTpl } from './templates.js';
 
 const API_URL = 'https://api.github.com';
-const CACHE_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const USE_CACHE = true;
 
 const render = (el, data, tpl = errorTpl, append = false) => {
 	const html = tpl(data);
@@ -13,73 +14,31 @@ const render = (el, data, tpl = errorTpl, append = false) => {
 	return (el.innerHTML = html);
 };
 
-// Use some client-side caching, otherwise Githubs ratelimiter will kick our asses.
-const cache = {
-	get(url) {
-		let item = JSON.parse(localStorage.getItem(url) || false);
-
-		if (item && item.timestamp) {
-			if (Date.now() - item.timestamp < CACHE_TIMEOUT) {
-				return item.data;
-			}
-
-			// Outdated
-			cache.remove(url);
-			item = false;
-		}
-
-		return item;
-	},
-
-	set(url, data) {
-		const value = {
-			timestamp: Date.now(),
-			data,
-		};
-
-		try {
-			localStorage.setItem(url, JSON.stringify(value));
-		} catch (err) {
-			console.error(err);
-		}
-	},
-
-	remove(url) {
-		localStorage.removeItem(url);
-	},
-};
-
+// TODO: refactor
 const getJSON = (url, callback) => {
-	const fromCache = cache.get(url);
+	const isError = Math.floor(Math.random() * 5) === 0;
+
+	if (isError) {
+		return callback(new Error('Extreme network error!'));
+	}
+
+	const fromCache = USE_CACHE && cache.get(url);
 
 	if (fromCache) {
 		return callback(null, fromCache);
 	}
 
-	const xhr = new XMLHttpRequest();
+	fetch(url)
+		.then((res) => {
+			res.json()
+				.then((json) => {
+					if (USE_CACHE) {
+						cache.set(url, json);
+					}
 
-	xhr.open('GET', url);
-
-	xhr.onload = () => {
-		if (xhr.status === 200) {
-			const data = JSON.parse(xhr.responseText);
-
-			cache.set(url, data);
-
-			return callback(null, data);
-		}
-
-		return callback(new Error(`Request failed: ${xhr.statusText}`));
-	};
-
-	xhr.onabort = () => callback(new Error(`Request failed: ${xhr.statusText}`)); // Use abort as fake error
-
-	xhr.send();
-
-	// 20% error chance :p
-	if (Math.floor(Math.random() * 5) === 0) {
-		xhr.abort();
-	}
+					callback(null, json)
+				});
+		});
 };
 
 // IIFE to kick it all off
