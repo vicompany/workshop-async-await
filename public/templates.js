@@ -1,13 +1,24 @@
-const error = (msg = 'Oops!') => `<div class="error">${msg}</div>`;
+const errorTpl = ({ message = 'Oops!' } = {}) => `<div class="error">${message}</div>`;
 
-const org = data => `
+const orgTpl = org => `
 	<h1>
-		<a href="/"><img class="logo" src="${data.avatar_url}" alt="logo" /> ${data.name}</a>
+		<a href="/"><img class="logo" src="${org.avatar_url}" alt="logo" /> ${org.name}</a>
 	</h1>
-	<p>${data.description}</p>
+	<p>${org.description}</p>
+`;
+
+const reposTpl = repos => `
+	<ul>
+		${repos.map(r => `
+			<li>
+				<a href="${r.url}">${r.name}</a>
+			</li>
+		`).join('')}
+	</ul>
 `;
 
 export {
-	error,
-	org,
+	errorTpl,
+	orgTpl,
+	reposTpl,
 };
