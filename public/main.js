@@ -16,28 +16,29 @@ const render = (el, data, tpl = errorTpl, append = false) => {
 // Use some client-side caching, otherwise Githubs ratelimiter will kick our asses.
 const cache = {
 	get(url) {
-		const item = JSON.parse(localStorage.getItem(url) || false);
+		let item = JSON.parse(localStorage.getItem(url) || false);
 
 		if (item && item.timestamp) {
-			if (Date.now() - item.timestamp > CACHE_TIMEOUT) {
-				return item.response;
+			if (Date.now() - item.timestamp < CACHE_TIMEOUT) {
+				return item.data;
 			}
 
 			// Outdated
 			cache.remove(url);
+			item = false;
 		}
 
 		return item;
 	},
 
-	set(url, response) {
-		const data = {
+	set(url, data) {
+		const value = {
 			timestamp: Date.now(),
-			response,
+			data,
 		};
 
 		try {
-			localStorage.setItem(url, JSON.stringify(data));
+			localStorage.setItem(url, JSON.stringify(value));
 		} catch (err) {
 			console.error(err);
 		}
@@ -61,9 +62,11 @@ const getJSON = (url, callback) => {
 
 	xhr.onload = () => {
 		if (xhr.status === 200) {
-			cache.set(url, xhr.responseText);
+			const data = JSON.parse(xhr.responseText);
 
-			return callback(null, JSON.parse(xhr.responseText));
+			cache.set(url, data);
+
+			return callback(null, data);
 		}
 
 		return callback(new Error(`Request failed: ${xhr.statusText}`));
