@@ -6,5 +6,9 @@ module.exports = {
 	parserOptions: {
 		sourceType : 'module',
 	},
-	root: true
+	root: true,
+	rules: {
+		'no-shadow': ['error', { allow: ['err', 'cb', 'callback'] }],
+		'consistent-return': 'off'
+	}
 };
