@@ -36,7 +36,7 @@ const getJSON = (url, callback) => {
 						cache.set(url, json);
 					}
 
-					callback(null, json)
+					callback(null, json);
 				});
 		});
 };
