@@ -4,18 +4,16 @@
   "private": true,
   "description": "Learn while you do: Async functions",
   "scripts": {
-    "server": "json-server --read-only ./api/db.js",
-    "start": "nodemon --exec npm run server",
+    "server": "browser-sync start --server \"public\" --files \"public/*.js\" --no-open",
+    "start": "npm run server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "VI Company",
   "license": "MIT",
   "devDependencies": {
+    "browser-sync": "^2.18.13",
     "eslint": "^4.6.1",
-    "eslint-config-vi": "^8.0.0",
-    "faker": "^4.1.0",
-    "json-server": "^0.12.0",
-    "nodemon": "^1.12.0"
+    "eslint-config-vi": "^8.0.0"
   }
 }

@@ -22,27 +22,6 @@
 			<div id="resources" class="container"></div>
 		</footer>
 
-		<script src="https://unpkg.com/mithril/mithril.min.js"></script>
-		<script>
-			// Resource list
-			var db = {};
-
-			m.request('db').then(function (data) {
-				db = data;
-			});
-
-			m.mount(document.getElementById('resources'), {
-				view: function view() {
-					var keys = Object.keys(db);
-					var resourceList = m('ul', keys.map(function (key) {
-						return m('li', [m('a', { href: key }, '/' + key), m('sup', Array.isArray(db[key]) ? ' ' + db[key].length + 'x' : ' object')]);
-					}).concat([m('a', { href: 'db' }, '/db'), m('sup', m('em', ' state'))]));
-
-					return [m('h2', 'API Resources'), keys.length ? resourceList : m('p', 'No resources found')];
-				}
-			});
-		</script>
-
 		<script src="main.js"></script>
 	</body>
 </html>

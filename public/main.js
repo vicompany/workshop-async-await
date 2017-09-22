@@ -1,3 +1,10 @@
+// repos
+// - repo details
+// -- contributers
+// -- contributer counts
+
+const BASE_URL = 'https://api.github.com';
+
 const getJSON = (url, callback) => {
 	const xhr = new XMLHttpRequest();
 
@@ -76,23 +83,25 @@ const loadTransactions = (el) => {
 (() => {
 	const container = document.getElementById('users');
 
-	getJSON('/users', (err, users) => {
-		if (err) {
-			renderError(container, 'Cannot retrieve users!');
+	getJSON(`${BASE_URL}/orgs/vicompany`, console.log);
 
-			return;
-		}
+	// getJSON('/users', (err, users) => {
+	// 	if (err) {
+	// 		renderError(container, 'Cannot retrieve users!');
 
-		renderUsers(container, users);
+	// 		return;
+	// 	}
 
-		container.addEventListener('click', (e) => {
-			const link = e.target.closest('.js-load-transactions');
+	// 	renderUsers(container, users);
 
-			if (link) {
-				e.preventDefault();
+	// 	container.addEventListener('click', (e) => {
+	// 		const link = e.target.closest('.js-load-transactions');
 
-				loadTransactions(link);
-			}
-		});
-	});
+	// 		if (link) {
+	// 			e.preventDefault();
+
+	// 			loadTransactions(link);
+	// 		}
+	// 	});
+	// });
 })();
