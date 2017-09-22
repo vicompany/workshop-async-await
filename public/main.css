@@ -78,8 +78,21 @@ div > dd {
 	content: 'TODO: ';
 }
 
-.avatar {
+.error {
+	margin: 1rem 0;
+	color: #c00;
+	font-size: 2rem;
+}
+
+img {
 	width: 100%;
+}
+
+.logo {
+	max-width: 6.25rem;
+}
+
+.avatar {
 	max-width: 2rem;
 	margin-right: 0.5rem;
 

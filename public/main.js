@@ -1,3 +1,15 @@
+import { error, org } from './templates.js';
+
+const render = (el, data, tpl = error, append = false) => {
+	const html = tpl(data);
+
+	if (append) {
+		return el.insertAdjacentHTML('beforeend', html);
+	}
+
+	return (el.innerHTML = html);
+};
+
 // repos
 // - repo details
 // -- contributers
@@ -81,9 +93,19 @@ const loadTransactions = (el) => {
 
 // IIFE to kick it all off
 (() => {
-	const container = document.getElementById('users');
+	const main = document.querySelector('main');
 
-	getJSON(`${BASE_URL}/orgs/vicompany`, console.log);
+	getJSON(`${BASE_URL}/orgs/vicompany`, (err, data) => {
+		if (err) {
+			return render(main, 'Cannot retrieve org', error);
+		}
+
+		console.log('org', org(data), data);
+
+		return render(main, data, org);
+
+		// container.insertAdjacentHTML('beforeend', org(data));
+	});
 
 	// getJSON('/users', (err, users) => {
 	// 	if (err) {
