@@ -57,7 +57,7 @@ const getJSON = (url, callback) => {
 
 		getJSON(reposUrl, (err, repos) => {
 			if (err) {
-				render(reposEl, { message: 'They took my repos. Dook err derr!' });
+				return render(reposEl, { message: 'They took my repos. Dook err derr!' });
 			}
 
 			console.log('repos', repos);

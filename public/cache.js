@@ -1,5 +1,6 @@
 // Use some client-side caching, otherwise Githubs API rate limiter will kick our asses.
-// You shouldn't need to touch this. Can't touch this, Hammer time!
+// Stop! You shouldn't need to edit this file.
+// Can't touch this! Hammer time!
 
 const CACHE_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
