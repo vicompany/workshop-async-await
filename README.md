@@ -138,3 +138,9 @@ async function foo() {
 The demo project contains some nice [callback-based JavaScript code](./public/main.js) which uses a REST API to display information about fictional users, transactions and products.
 
 It's up to you rewrite this code to async/await and add the product details and total transaction amount.
+
+
+### Firefox
+
+- Enable ES Modules: ``.
+- Enable the dialog element: `dom.dialog_element.enabled`.

@@ -1,5 +1,5 @@
 import cache from './cache.js';
-import { errorTpl, orgTpl, reposTpl } from './templates.js';
+import { errorTpl, orgTpl, reposTpl, repoTpl, contributorsTpl } from './templates.js';
 
 const API_URL = 'https://api.github.com';
 const USE_CACHE = true;
@@ -8,24 +8,27 @@ const render = (el, data, tpl = errorTpl, append = false) => {
 	const html = tpl(data);
 
 	if (append) {
-		return el.insertAdjacentHTML('beforeend', html);
+		el.insertAdjacentHTML('beforeend', html);
+	} else {
+		el.innerHTML = html;
 	}
 
-	return (el.innerHTML = html);
+	return el;
 };
 
-// TODO: refactor
+// TODO: refactor into something more elegant.
+// Luke, use the fetch!
 const getJSON = (url, callback) => {
-	const isError = Math.floor(Math.random() * 5) === 0;
+	const isError = Math.floor(Math.random() * 10) === 0; // 10% error chance
 
 	if (isError) {
 		return callback(new Error('Extreme network error!'));
 	}
 
-	const fromCache = USE_CACHE && cache.get(url);
+	const isCached = USE_CACHE && cache.get(url);
 
-	if (fromCache) {
-		return callback(null, fromCache);
+	if (isCached) {
+		return callback(null, isCached);
 	}
 
 	fetch(url)
@@ -43,46 +46,74 @@ const getJSON = (url, callback) => {
 
 // IIFE to kick it all off
 (() => {
-	const main = document.querySelector('#org');
-
 	getJSON(`${API_URL}/orgs/vicompany`, (err, org) => {
+		const el = document.querySelector('#org');
+
 		if (err) {
-			return render(main, err);
+			return render(el, err);
 		}
 
-		render(main, org, orgTpl);
+		render(el, org, orgTpl);
 
 		const { repos_url: reposUrl } = org;
-		const reposEl = document.querySelector('#repos');
 
 		getJSON(reposUrl, (err, repos) => {
+			const reposEl = document.querySelector('#repos');
+
 			if (err) {
 				return render(reposEl, { message: 'They took my repos. Dook err derr!' });
 			}
 
-			console.log('repos', repos);
+			repos = repos
+				.filter(r => r.fork === false)
+				.sort(r => new Date(r.updated_at).getTime());
 
 			render(reposEl, repos, reposTpl);
 		});
 	});
 
-	// getJSON('/users', (err, users) => {
-	// 	if (err) {
-	// 		renderError(container, 'Cannot retrieve users!');
+	document
+		.querySelector('main')
+		.addEventListener('click', (e) => {
+			const { target } = e;
+			const modal = document.querySelector('#modal');
 
-	// 		return;
-	// 	}
+			if (target.classList.contains('js-repo')) {
+				e.preventDefault();
 
-	// 	renderUsers(container, users);
+				getJSON(target.href, (err, repo) => {
+					if (err) {
+						return render(target, err, errorTpl);
+					}
 
-	// 	container.addEventListener('click', (e) => {
-	// 		const link = e.target.closest('.js-load-transactions');
+					render(modal, repo, repoTpl);
 
-	// 		if (link) {
-	// 			e.preventDefault();
+					modal.querySelector('dialog').showModal();
+				});
+			}
 
-	// 			loadTransactions(link);
-	// 		}
-	// 	});
-	// });
+			if (target.classList.contains('js-contributors')) {
+				e.preventDefault();
+
+				getJSON(target.href, (err, contributors) => {
+					if (err) {
+						return render(target, err, errorTpl);
+					}
+
+					const data = {
+						contributors,
+						sum: 32432, // TODO: sum all contributions
+					};
+
+					render(modal, data, contributorsTpl);
+
+					modal.querySelector('dialog').showModal();
+				});
+			}
+
+			if (target.classList.contains('js-close')) {
+				e.preventDefault();
+				target.closest('dialog').close();
+			}
+		});
 })();
