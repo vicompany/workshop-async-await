@@ -9,6 +9,7 @@ module.exports = {
 	root: true,
 	rules: {
 		'no-shadow': ['error', { allow: ['err', 'cb', 'callback'] }],
-		'consistent-return': 'off'
+		'consistent-return': 'off',
+		'require-await': 'off'
 	}
 };
