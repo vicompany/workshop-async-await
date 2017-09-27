@@ -31,10 +31,10 @@ const getJSON = (url, callback) => {
 		return callback(new Error('Extreme network error!'));
 	}
 
-	const isCached = USE_CACHE && cache.get(url);
+	const fromCache = USE_CACHE && cache.get(url);
 
-	if (isCached) {
-		return callback(null, isCached);
+	if (fromCache) {
+		return callback(null, fromCache);
 	}
 
 	fetch(url)
