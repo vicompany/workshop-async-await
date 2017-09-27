@@ -60,8 +60,27 @@ dd + dt {
 	margin-top: 1rem;
 }
 
+.user {
+	display: flex;
+	margin: 0 0 0 2rem;
+}
+
+.user > dt {
+	margin: 0 0.5rem;
+	font-weight: normal;
+}
+
+.user > dt::after {
+	content: ':';
+}
+
+/* .user > dt + dd {
+	margin-right: 0.5rem;
+} */
+
 .todo {
-	font-size: 0.875rem;
+	font-size: 0.75rem;
+	line-height: 2;
 	color: #c00;
 }
 

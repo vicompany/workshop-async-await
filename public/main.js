@@ -1,5 +1,11 @@
 import cache from './cache.js';
-import { errorTpl, orgTpl, reposTpl, repoTpl, contributorsTpl } from './templates.js';
+import {
+	errorTpl,
+	orgTpl,
+	reposTpl,
+	repoTpl,
+	contributorsTpl,
+} from './templates.js';
 
 const API_URL = 'https://api.github.com';
 const USE_CACHE = true;
@@ -95,14 +101,19 @@ const getJSON = (url, callback) => {
 			if (target.classList.contains('js-contributors')) {
 				e.preventDefault();
 
-				getJSON(target.href, (err, contributors) => {
+				getJSON(target.href, (err, contributors = []) => {
 					if (err) {
 						return render(target, err, errorTpl);
 					}
 
+					// TODO: retrieve user data!
 					const data = {
 						contributors,
-						sum: 32432, // TODO: sum all contributions
+						users: contributors.map(c => ({
+							url: c.url,
+							avatar: c.avatar_url,
+							login: c.login,
+						})),
 					};
 
 					render(modal, data, contributorsTpl);

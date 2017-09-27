@@ -31,13 +31,21 @@ const contributorsTpl = data => `
 	<dialog>
 		<dl>
 			<dt>Contributors</dt>
-				${data.contributors.map(c => `
+				${data.users.map(u => `
 					<dd>
-						<a href="${c.url}"><img class="avatar" src="${c.avatar_url}" alt="avatar" />${c.login}</a> TODO: full name, location, etc.
+						<a href="${u.url}"><img class="avatar" src="${u.avatar}" alt="avatar" />${u.login}</a>
+						<dl class="user">
+							<dt>Full name</dt>
+							<dd class="todo">user.name</dd>
+							<dt>Public repos</dt>
+							<dd class="todo">user.public_repos</dd>
+							<dt>Followers</dt>
+							<dd class="todo">user.followers</dd>
+						</dl>
 					</dd>
 				`).join('')}
 			<dt>Total contributions</dt>
-			<dd>TODO: ${data.sum}</dd>
+			<dd class="todo">Sum contributions</dd>
 		</dl>
 		<button class="js-close">close</button>
 	</dialog>
