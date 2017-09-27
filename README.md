@@ -135,6 +135,15 @@ async function foo() {
 
 ## Assignment
 
-The demo project contains some nice [callback-based JavaScript code](./public/main.js) which uses a REST API to display information about fictional users, transactions and products.
+The demo project contains some nice [callback-based JavaScript code](./public/main.js) which uses the [Github REST API](https://developer.github.com/v3/) to display information about our repositories.
 
-It's up to you rewrite this code to async/await and add the product details and total transaction amount.
+It's up to you to:
+
+- Rewrite this code to async/await (remove the callbacks).
+- Add the sum of the contributions.
+- Add the user details.
+
+### Firefox
+
+- Enable ES Modules: `dom.moduleScripts.enabled`.
+- Enable the dialog element: `dom.dialog_element.enabled`.

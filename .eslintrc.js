@@ -3,5 +3,12 @@ module.exports = {
 	env: {
 		browser: true,
 	},
-	root: true
+	parserOptions: {
+		sourceType : 'module',
+	},
+	root: true,
+	rules: {
+		'no-shadow': ['error', { allow: ['err', 'cb', 'callback'] }],
+		'consistent-return': 'off'
+	}
 };

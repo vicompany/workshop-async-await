@@ -1,98 +1,130 @@
+import cache from './cache.js';
+import {
+	errorTpl,
+	orgTpl,
+	reposTpl,
+	repoTpl,
+	contributorsTpl,
+} from './templates.js';
+
+const API_URL = 'https://api.github.com';
+const USE_CACHE = true;
+
+const render = (el, data, tpl = errorTpl, append = false) => {
+	const html = tpl(data);
+
+	if (append) {
+		el.insertAdjacentHTML('beforeend', html);
+	} else {
+		el.innerHTML = html;
+	}
+
+	return el;
+};
+
+// TODO: refactor into something more elegant.
+// Luke, use the fetch!
 const getJSON = (url, callback) => {
-	const xhr = new XMLHttpRequest();
+	const isError = Math.floor(Math.random() * 10) === 0; // 10% error chance
 
-	xhr.open('GET', url);
-
-	xhr.onload = () => {
-		if (xhr.status === 200) {
-			return callback(null, JSON.parse(xhr.responseText));
-		}
-
-		return callback(new Error(`Request failed: ${xhr.statusText}`));
-	};
-
-	xhr.onabort = () => callback(new Error(`Request failed: ${xhr.statusText}`)); // Use abort as fake error
-
-	xhr.send();
-
-	// 20% error chance :p
-	if (Math.floor(Math.random() * 5) === 0) {
-		xhr.abort();
-	}
-};
-
-const renderError = (el, msg = 'Oops!') => (el.textContent = msg);
-
-const renderUsers = (el, users) => {
-	const html = `
-		<dl>
-			${users.map(u => `
-				<div>
-					<dt>User</dt>
-					<dd><a href="/users/${u.id}"><img class="avatar" src="${u.avatar}" alt="${u.name}" />${u.name}</a></dd>
-					<dt>Transactions</dt>
-					<dd><a href="/users/${u.id}/transactions" class="js-load-transactions">Load</a></dd>
-				</div>
-			`).join('')}
-		</dl>
-	`;
-
-	el.innerHTML = html;
-};
-
-const renderTransactions = (el, transactions) => {
-	const html = `
-		<dl class="js-transactionlist">
-			${transactions.map(t => `
-				<dt><a href="/transactions/${t.id}">Transaction: ${t.id}</a></dt>
-				<dd><a href="/products/${t.productId}">Product: ${t.productId}</a><dd>
-				<dd class="todo">Product price/details<dd>
-			`).join('')}
-			<dt>Total $</dt>
-			<dd class="todo">transaction amount</dd>
-		</dl>
-	`;
-
-	el.innerHTML = html;
-};
-
-const loadTransactions = (el) => {
-	const { href, parentElement: container } = el;
-
-	if (!href) {
-		return;
+	if (isError) {
+		return callback(new Error('Extreme network error!'));
 	}
 
-	getJSON(href, (err, transactions) => {
-		if (err) {
-			return renderError(container, 'Transaction unavailable!');
-		}
+	const isCached = USE_CACHE && cache.get(url);
 
-		return renderTransactions(container, transactions);
-	});
+	if (isCached) {
+		return callback(null, isCached);
+	}
+
+	fetch(url)
+		.then((res) => {
+			res.json()
+				.then((json) => {
+					if (USE_CACHE) {
+						cache.set(url, json);
+					}
+
+					callback(null, json);
+				});
+		});
 };
 
 // IIFE to kick it all off
 (() => {
-	const container = document.getElementById('users');
+	getJSON(`${API_URL}/orgs/vicompany`, (err, org) => {
+		const el = document.querySelector('#org');
 
-	getJSON('/users', (err, users) => {
 		if (err) {
-			renderError(container, 'Cannot retrieve users!');
-
-			return;
+			return render(el, err);
 		}
 
-		renderUsers(container, users);
+		render(el, org, orgTpl);
 
-		container.addEventListener('click', (e) => {
-			const link = e.target.closest('.js-load-transactions');
+		const { repos_url: reposUrl } = org;
 
-			if (link) {
-				e.preventDefault();
+		getJSON(reposUrl, (err, repos) => {
+			const reposEl = document.querySelector('#repos');
 
-				loadTransactions(link);
+			if (err) {
+				return render(reposEl, { message: 'They took my repos. Dook err derr!' });
 			}
+
+			repos = repos
+				.filter(r => r.fork === false)
+				.sort(r => new Date(r.updated_at).getTime());
+
+			render(reposEl, repos, reposTpl);
 		});
 	});
+
+	document
+		.querySelector('main')
+		.addEventListener('click', (e) => {
+			const { target } = e;
+			const modal = document.querySelector('#modal');
+
+			if (target.classList.contains('js-repo')) {
+				e.preventDefault();
+
+				getJSON(target.href, (err, repo) => {
+					if (err) {
+						return render(target, err, errorTpl);
+					}
+
+					render(modal, repo, repoTpl);
+
+					modal.querySelector('dialog').showModal();
+				});
+			}
+
+			if (target.classList.contains('js-contributors')) {
+				e.preventDefault();
+
+				getJSON(target.href, (err, contributors = []) => {
+					if (err) {
+						return render(target, err, errorTpl);
+					}
+
+					// TODO: retrieve user data!
+					const data = {
+						contributors,
+						users: contributors.map(c => ({
+							url: c.url,
+							avatar: c.avatar_url,
+							login: c.login,
+						})),
+					};
+
+					render(modal, data, contributorsTpl);
+
+					modal.querySelector('dialog').showModal();
+				});
+			}
+
+			if (target.classList.contains('js-close')) {
+				e.preventDefault();
+				target.closest('dialog').close();
+			}
+		});
 })();
