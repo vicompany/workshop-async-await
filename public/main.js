@@ -28,7 +28,7 @@ const getJSON = (url, callback) => {
 	const isError = Math.floor(Math.random() * 10) === 0; // 10% error chance
 
 	if (isError) {
-		return callback(new Error('Extreme network error!'));
+		return callback(new Error('Network error!'));
 	}
 
 	const fromCache = USE_CACHE && cache.get(url);
@@ -50,6 +50,20 @@ const getJSON = (url, callback) => {
 		});
 };
 
+const getRepos = (url, callback) => {
+	getJSON(url, (err, repos = []) => {
+		if (err) {
+			return callback(new Error('They took my repos. Dook err derr!'));
+		}
+
+		repos = repos
+			.filter(r => r.fork === false) // No forks, no forks!
+			.sort(r => new Date(r.updated_at).getTime());
+
+		callback(null, repos);
+	});
+};
+
 // IIFE to kick it all off
 (() => {
 	getJSON(`${API_URL}/orgs/vicompany`, (err, org) => {
@@ -63,16 +77,12 @@ const getJSON = (url, callback) => {
 
 		const { repos_url: reposUrl } = org;
 
-		getJSON(reposUrl, (err, repos) => {
+		getRepos(reposUrl, (err, repos) => {
 			const reposEl = document.querySelector('#repos');
 
 			if (err) {
-				return render(reposEl, { message: 'They took my repos. Dook err derr!' });
+				return render(reposEl, err);
 			}
-
-			repos = repos
-				.filter(r => r.fork === false)
-				.sort(r => new Date(r.updated_at).getTime());
 
 			render(reposEl, repos, reposTpl);
 		});
@@ -89,7 +99,7 @@ const getJSON = (url, callback) => {
 
 				getJSON(target.href, (err, repo) => {
 					if (err) {
-						return render(target, err, errorTpl);
+						return render(target, err);
 					}
 
 					render(modal, repo, repoTpl);
@@ -122,7 +132,7 @@ const getJSON = (url, callback) => {
 				});
 			}
 
-			if (target.classList.contains('js-close')) {
+			if (target.classList.contains('js-modal-close')) {
 				e.preventDefault();
 				target.closest('dialog').close();
 			}

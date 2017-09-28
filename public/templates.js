@@ -23,7 +23,7 @@ const repoTpl = repo => `
 		<h2>${repo.full_name}</h2>
 		<p>${repo.description || 'No description available'}</p>
 		<p>View <a href="${repo.html_url}" target="blank">${repo.name}</a> on Github.<p>
-		<button class="js-close">close</button>
+		<button class="js-modal-close">close</button>
 	</dialog>
 `;
 
@@ -47,7 +47,7 @@ const contributorsTpl = data => `
 			<dt>Total contributions</dt>
 			<dd class="todo">Sum contributions</dd>
 		</dl>
-		<button class="js-close">close</button>
+		<button class="js-modal-close">close</button>
 	</dialog>
 `;
 
