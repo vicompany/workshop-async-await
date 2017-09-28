@@ -1,4 +1,8 @@
-const errorTpl = ({ message = 'Oops!' } = {}) => `<div class="error">${message}</div>`;
+const errorTpl = ({ message = 'Oops!' } = {}) => `
+	<dialog class="error">
+		<div>${message}</div>
+	</dialog>
+`;
 
 const orgTpl = org => `
 	<h1>
@@ -51,8 +55,30 @@ const contributorsTpl = data => `
 	</dialog>
 `;
 
+const render = (el, data, tpl, append = false) => {
+	const html = tpl(data);
+
+	if (append) {
+		el.insertAdjacentHTML('beforeend', html);
+	} else {
+		el.innerHTML = html;
+	}
+
+	return el;
+};
+
+const renderError = (err) => {
+	const el = render(document.querySelector('#error'), err, errorTpl);
+	const dialog = el.querySelector('dialog');
+
+	dialog.show();
+
+	setTimeout(() => dialog.close(), 1500);
+};
+
 export {
-	errorTpl,
+	render,
+	renderError,
 	orgTpl,
 	reposTpl,
 	repoTpl,

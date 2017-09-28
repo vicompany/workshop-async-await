@@ -1,6 +1,7 @@
 import cache from './cache.js';
 import {
-	errorTpl,
+	render,
+	renderError,
 	orgTpl,
 	reposTpl,
 	repoTpl,
@@ -9,18 +10,6 @@ import {
 
 const API_URL = 'https://api.github.com';
 const USE_CACHE = true;
-
-const render = (el, data, tpl = errorTpl, append = false) => {
-	const html = tpl(data);
-
-	if (append) {
-		el.insertAdjacentHTML('beforeend', html);
-	} else {
-		el.innerHTML = html;
-	}
-
-	return el;
-};
 
 // TODO: refactor into something more elegant.
 // Luke, use the fetch!
@@ -70,7 +59,7 @@ const getRepos = (url, callback) => {
 		const el = document.querySelector('#org');
 
 		if (err) {
-			return render(el, err);
+			return renderError(err);
 		}
 
 		render(el, org, orgTpl);
@@ -81,7 +70,7 @@ const getRepos = (url, callback) => {
 			const reposEl = document.querySelector('#repos');
 
 			if (err) {
-				return render(reposEl, err);
+				return renderError(err);
 			}
 
 			render(reposEl, repos, reposTpl);
@@ -99,7 +88,7 @@ const getRepos = (url, callback) => {
 
 				getJSON(target.href, (err, repo) => {
 					if (err) {
-						return render(target, err);
+						return renderError(err);
 					}
 
 					render(modal, repo, repoTpl);
@@ -113,7 +102,7 @@ const getRepos = (url, callback) => {
 
 				getJSON(target.href, (err, contributors = []) => {
 					if (err) {
-						return render(target, err, errorTpl);
+						return renderError(err);
 					}
 
 					// TODO: retrieve user data!

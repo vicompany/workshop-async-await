@@ -27,6 +27,7 @@ header {
 
 footer {
 	margin-top: 2rem;
+	padding: 1rem 0;
 	border-top: solid 1px #eee;
 }
 
@@ -88,12 +89,6 @@ dd + dt {
 	content: 'TODO: ';
 }
 
-.error {
-	margin: 1rem 0;
-	color: #c00;
-	font-size: 2rem;
-}
-
 img {
 	width: 100%;
 }
@@ -147,4 +142,10 @@ dialog::backdrop {
 
 dialog > button {
 	margin: 1rem 0 0;
+}
+
+.error {
+	text-align: center;
+	color: #c00;
+	border-color: #c00;
 }
