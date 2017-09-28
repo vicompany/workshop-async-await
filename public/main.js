@@ -105,7 +105,8 @@ const getRepos = (url, callback) => {
 						return renderError(err);
 					}
 
-					// TODO: retrieve user data!
+					// TODO: get user data from all contributers e.g. https://api.github.com/users/svensigmond
+					// and replace the 'users' array with this real data.
 					const data = {
 						contributors,
 						users: contributors.map(c => ({
