@@ -1,7 +1,4 @@
-import {
-	html,
-	render,
-} from './lib/lit-html.js';
+import { html, render } from 'https://unpkg.com/lit-html@0.6.0/lit-html.js';
 
 const errorTpl = ({ message = 'Oops!' } = {}) => html`
 	<dialog class="error">
