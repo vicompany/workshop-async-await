@@ -1,28 +1,33 @@
-const errorTpl = ({ message = 'Oops!' } = {}) => `
+import {
+	html,
+	render,
+} from './lib/lit-html.js';
+
+const errorTpl = ({ message = 'Oops!' } = {}) => html`
 	<dialog class="error">
 		<div>${message}</div>
 	</dialog>
 `;
 
-const orgTpl = org => `
+const orgTpl = org => html`
 	<h1>
 		<a href="${org.url}" target="blank" title="View API on Github"><img class="logo" src="${org.avatar_url}" alt="logo" /> ${org.name}</a>
 	</h1>
 	<p>${org.description}</p>
 `;
 
-const reposTpl = repos => `
+const reposTpl = repos => html`
 	<h2>Repositories</h2>
 	<ul>
-		${repos.map(r => `
+		${repos.map(r => html`
 			<li>
 				<a class="js-repo" href="${r.url}">${r.name}</a> - <a class="js-contributors" href="${r.contributors_url}">contributors</a>
 			</li>
-		`).join('')}
+		`)}
 	</ul>
 `;
 
-const repoTpl = repo => `
+const repoTpl = repo => html`
 	<dialog>
 		<h2>${repo.full_name}</h2>
 		<p>${repo.description || 'No description available'}</p>
@@ -31,11 +36,11 @@ const repoTpl = repo => `
 	</dialog>
 `;
 
-const contributorsTpl = data => `
+const contributorsTpl = data => html`
 	<dialog>
 		<dl>
 			<dt>Contributors</dt>
-				${data.users.map(u => `
+				${data.users.map(u => html`
 					<dd>
 						<a href="${u.url}"><img class="avatar" src="${u.avatar}" alt="avatar" />${u.login}</a>
 						<dl class="user">
@@ -47,7 +52,7 @@ const contributorsTpl = data => `
 							<dd class="todo">user.followers</dd>
 						</dl>
 					</dd>
-				`).join('')}
+				`)}
 			<dt>Total contributions</dt>
 			<dd class="todo">Sum contributions</dd>
 		</dl>
@@ -55,20 +60,14 @@ const contributorsTpl = data => `
 	</dialog>
 `;
 
-const render = (el, data, tpl, append = false) => {
-	const html = tpl(data);
-
-	if (append) {
-		el.insertAdjacentHTML('beforeend', html);
-	} else {
-		el.innerHTML = html;
-	}
+const renderHtml = (el, data, tpl) => {
+	render(tpl(data), el);
 
 	return el;
 };
 
 const renderError = (err) => {
-	const el = render(document.querySelector('#error'), err, errorTpl);
+	const el = renderHtml(document.querySelector('#error'), err, errorTpl);
 	const dialog = el.querySelector('dialog');
 
 	dialog.show();
@@ -77,7 +76,7 @@ const renderError = (err) => {
 };
 
 export {
-	render,
+	renderHtml as render,
 	renderError,
 	orgTpl,
 	reposTpl,

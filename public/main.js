@@ -1,4 +1,4 @@
-import cache from './cache.js';
+import cache from './lib/cache.js';
 import {
 	render,
 	renderError,
