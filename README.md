@@ -135,11 +135,11 @@ async function foo() {
 
 ## Assignment
 
-The demo project contains some nice [callback-based JavaScript code](./public/main.js) which uses the [Github REST API](https://developer.github.com/v3/) to display information about our repositories.
+The demo project contains some nice [callback-based JavaScript code](./public/js/main.js) which uses the [Github REST API](https://developer.github.com/v3/) to display information about our repositories.
 
 It's up to you to:
 
-- Rewrite this code to async/await (remove the callbacks).
+- Rewrite [this code](./public/js/main.js) to async/await (remove the callbacks).
 - Add the sum of the contributions.
 - Add the user details.
 
