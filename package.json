@@ -4,7 +4,7 @@
   "private": true,
   "description": "Learn while you do: Async functions",
   "scripts": {
-    "server": "browser-sync start --server \"public\" --files \"public/*.js\" --no-open",
+    "server": "browser-sync start --server \"public\" --files \"public/**/*.js\" --no-open",
     "start": "npm run server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
