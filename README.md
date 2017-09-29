@@ -23,7 +23,8 @@ async function greet(name) {
   return `Hello ${name}`;
 }
 
-greet('Joe').then(console.log) // Hello Joe
+greet('Joe')
+  .then(console.log) // Hello Joe
 
 greet('Bob')
   .then(console.log)
@@ -33,7 +34,7 @@ greet('Bob')
 ### 3. An async function can contain an `await` expression
 
 - The `await` operator is used to wait for the result of a `Promise`.
-- __The `await` operator can only be used inside an async function!__
+- The `await` operator can only be used __inside an async function!__
 
 ```javascript
 const getJson = url => fetch(url).then(res => res.json());
@@ -59,15 +60,19 @@ async function w00t() {
 w00t();
 ```
 
-Otherwise you can just return the value without using `await` (and without wrapping the result).
+And when the return value is a Promise, you can just return it without using `await` (and without wrapping the result).
 
 ```javascript
-async function getJson(url) {
+async function getStuff(id) {
+  const url = await getUrl(id);
+
   return fetch(url).then(res => res.json());
 }
 
 // Don't do this!
-async function getJson(url) {
+async function getStuff(id) {
+  const url = await getUrl(id);
+
   return await fetch(url).then(res => res.json());
 }
 ```
@@ -118,8 +123,8 @@ async function foo() {
 }
 ```
 
-- [MDN - Destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
 - [Exploring JS - Await is sequential, Promise.all() is parallel](http://exploringjs.com/es2016-es2017/ch_async-functions.html#_await-is-sequential-promiseall-is-parallel)
+- [MDN - Destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
 
 ## More information
 
@@ -139,11 +144,15 @@ The demo project contains some nice [callback-based JavaScript code](./public/js
 
 It's up to you to:
 
-- Rewrite [this code](./public/js/main.js) to async/await (remove the callbacks).
+- Rewrite [this code](./public/js/main.js) to async/await (remove the callbacks and add some methods).
 - Add the sum of the contributions.
 - Add the user details.
+- Go crazy if you like. :metal:
 
-### Firefox
+## Notes
 
-- Enable ES Modules: `dom.moduleScripts.enabled`.
-- Enable the dialog element: `dom.dialog_element.enabled`.
+- You need the latest Chrome or Firefox browser for this to run.
+- A cache (localStorage) is used to circumvent the APIs [rate limiting](https://developer.github.com/v3/#rate-limiting). So keep that in place.
+- For Firefox you need to enable the following settings (in `about:config`):
+  - ES Modules: `dom.moduleScripts.enabled`.
+  - The [`<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element: `dom.dialog_element.enabled`.
