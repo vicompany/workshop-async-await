@@ -144,7 +144,7 @@ The demo project contains some nice [callback-based JavaScript code](./public/js
 
 It's up to you to:
 
-- Rewrite [this code](./public/js/main.js) to async/await (remove the callbacks and add some methods).
+- Rewrite [this code](./public/js/main.js) to async/await (remove the callbacks and add some functions).
 - Add the sum of the contributions.
 - Add the user details.
 - Go crazy if you like. :metal:
