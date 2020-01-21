@@ -154,5 +154,5 @@ It's up to you to:
 - You need the latest Chrome or Firefox browser for this to run.
 - A cache (localStorage) is used to circumvent the APIs [rate limiting](https://developer.github.com/v3/#rate-limiting). So keep that in place.
 - For Firefox you need to enable the following settings (in `about:config`):
-  - ES Modules: `dom.moduleScripts.enabled`.
+  - ~ES Modules: `dom.moduleScripts.enabled`.~
   - The [`<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element: `dom.dialog_element.enabled`.
